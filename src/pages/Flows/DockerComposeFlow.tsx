@@ -86,89 +86,113 @@ export default function DockerComposeFlow() {
         selectedServices.every(serviceId => serviceDetails[serviceId]?.name?.trim()));
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-            <div className="absolute inset-0 bg-grid-white/[0.02] bg-grid-16" />
-            
-            {/* Back button */}
-            <div className="relative p-6">
-                <button
-                    onClick={() => navigate('/')}
-                    className="group flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground 
-                             hover:text-foreground transition-colors duration-200"
-                >
-                    <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Try Our Other Features
-                </button>
+        <div className="min-h-screen bg-black text-white overflow-hidden">
+            {/* Animated background */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-slate-900" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px]" />
+                <div className="absolute top-1/4 left-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-1/3 right-16 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
             </div>
-            
-            <div className="relative max-w-4xl mx-auto px-6 py-8">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-600 text-sm font-medium mb-6">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+
+            {/* Header */}
+            <header className="relative z-10 w-full border-b border-slate-800/50 backdrop-blur-xl">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="group flex items-center gap-3 px-4 py-2 rounded-lg border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm hover:border-slate-700/50 hover:bg-slate-800/50 transition-all duration-200"
+                    >
+                        <svg className="w-4 h-4 text-slate-400 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="text-sm text-slate-400 group-hover:text-white transition-colors">
+                            Back to InfraPilot
                         </span>
-                        Docker Compose Setup
+                    </button>
+
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span className="text-sm font-bold">🐳</span>
+                        </div>
+                        <div className="text-xl font-semibold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                            Docker Compose Builder
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+                {/* Header */}
+                <div className="text-center mb-16">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm font-medium mb-8">
+                        <div className="relative flex h-2 w-2">
+                            <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></div>
+                            <div className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></div>
+                        </div>
+                        Docker Compose Generator
                     </div>
                     
-                    <h1 className="text-4xl font-bold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent mb-4">
-                        Create Docker Compose for your services
+                    <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">
+                        <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                            Container orchestration
+                        </span>
+                        <br />
+                        <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                            made intelligent
+                        </span>
                     </h1>
                     
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
                         {step === 1 
-                            ? "Select the services you want to include in your Docker setup" 
-                            : "Configure the details for your selected services"
+                            ? "Select your services and let AI generate the perfect Docker Compose configuration" 
+                            : "Fine-tune your service configurations with intelligent defaults"
                         }
                     </p>
 
                     {/* Step indicator */}
-                    <div className="flex items-center justify-center gap-4 mt-6">
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs ${
-                            step >= 1 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+                    <div className="flex items-center justify-center gap-6 mt-8">
+                        <div className={`flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 ${
+                            step >= 1 ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/25' : 'bg-slate-800/50 text-slate-500'
                         }`}>
-                            <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-xs">1</span>
+                            <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">1</span>
                             Select Services
                         </div>
-                        <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-primary' : 'bg-border'}`} />
-                        <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs ${
-                            step >= 2 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+                        <div className={`w-12 h-1 rounded-full transition-all duration-300 ${step >= 2 ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-slate-700'}`} />
+                        <div className={`flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 ${
+                            step >= 2 ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/25' : 'bg-slate-800/50 text-slate-500'
                         }`}>
-                            <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-xs">2</span>
-                            Configure
+                            <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">2</span>
+                            Configure Details
                         </div>
                     </div>
                 </div>
 
                 {step === 1 && (
-                    <div className="space-y-6">
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-8">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {serviceTypes.map((service) => (
                                 <div
                                     key={service.id}
                                     onClick={() => toggleService(service.id)}
-                                    className={`group cursor-pointer relative bg-card/50 backdrop-blur-xl border rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] ${
+                                    className={`group cursor-pointer relative rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] ${
                                         selectedServices.includes(service.id)
-                                            ? 'border-primary/50 shadow-lg shadow-primary/10'
-                                            : 'border-border/50 hover:border-border'
+                                            ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/50 shadow-xl shadow-blue-500/25'
+                                            : 'bg-slate-900/50 border border-slate-800/50 hover:border-slate-700/50 hover:bg-slate-800/50'
                                     }`}
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="text-3xl">{service.icon}</div>
+                                        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-foreground mb-1">{service.label}</h3>
-                                            <p className="text-sm text-muted-foreground">{service.description}</p>
+                                            <h3 className="font-semibold text-white mb-2 group-hover:text-blue-300 transition-colors">{service.label}</h3>
+                                            <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{service.description}</p>
                                         </div>
-                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                                             selectedServices.includes(service.id) 
-                                                ? 'border-primary bg-primary' 
-                                                : 'border-border'
+                                                ? 'border-blue-400 bg-blue-500 shadow-lg shadow-blue-500/50' 
+                                                : 'border-slate-600 group-hover:border-slate-500'
                                         }`}>
                                             {selectedServices.includes(service.id) && (
-                                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                 </svg>
                                             )}
@@ -179,13 +203,16 @@ export default function DockerComposeFlow() {
                         </div>
 
                         {selectedServices.length > 0 && (
-                            <div className="mt-8 p-4 bg-primary/5 rounded-lg border border-primary/20">
-                                <h3 className="font-semibold text-foreground mb-2">Selected Services:</h3>
-                                <div className="flex flex-wrap gap-2">
+                            <div className="p-6 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl border border-blue-500/20">
+                                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                    <span className="text-blue-400">🎯</span>
+                                    Selected Services
+                                </h3>
+                                <div className="flex flex-wrap gap-3">
                                     {selectedServices.map(serviceId => {
                                         const service = serviceTypes.find(s => s.id === serviceId);
                                         return (
-                                            <span key={serviceId} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center gap-2">
+                                            <span key={serviceId} className="px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-full text-sm flex items-center gap-2 font-medium">
                                                 {service?.icon} {service?.label}
                                             </span>
                                         );
@@ -197,65 +224,78 @@ export default function DockerComposeFlow() {
                 )}
 
                 {step === 2 && (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                         {selectedServices.map((serviceId, index) => {
                             const service = serviceTypes.find(s => s.id === serviceId);
                             if (!service) return null;
 
                             return (
-                                <div key={serviceId} className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <span className="text-2xl">{service.icon}</span>
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-foreground">{service.label}</h3>
-                                            <p className="text-sm text-muted-foreground">{service.description}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-2">
-                                                Service Name *
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={serviceDetails[serviceId]?.name || ''}
-                                                onChange={(e) => updateServiceDetail(serviceId, 'name', e.target.value)}
-                                                placeholder={`my-${serviceId}`}
-                                                className="w-full px-3 py-2 bg-background/80 border border-border rounded-lg 
-                                                         focus:ring-2 focus:ring-primary/20 focus:border-primary/50 
-                                                         transition-all duration-200"
-                                            />
+                                <div key={serviceId} className="relative group">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                                    <div className="relative bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-8">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 flex items-center justify-center">
+                                                <span className="text-2xl">{service.icon}</span>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-xl font-semibold text-white">{service.label}</h3>
+                                                <p className="text-slate-400">{service.description}</p>
+                                            </div>
+                                            <div className="ml-auto">
+                                                <span className="px-3 py-1 bg-slate-800 text-slate-300 rounded-full text-sm">
+                                                    {index + 1} of {selectedServices.length}
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-2">
-                                                Port
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={serviceDetails[serviceId]?.port || ''}
-                                                onChange={(e) => updateServiceDetail(serviceId, 'port', e.target.value)}
-                                                placeholder={getDefaultPort(serviceId)}
-                                                className="w-full px-3 py-2 bg-background/80 border border-border rounded-lg 
-                                                         focus:ring-2 focus:ring-primary/20 focus:border-primary/50 
-                                                         transition-all duration-200"
-                                            />
-                                        </div>
+                                        <div className="grid md:grid-cols-3 gap-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-300 mb-3">
+                                                    Service Name *
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={serviceDetails[serviceId]?.name || ''}
+                                                    onChange={(e) => updateServiceDetail(serviceId, 'name', e.target.value)}
+                                                    placeholder={`my-${serviceId}`}
+                                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl 
+                                                             text-white placeholder:text-slate-500
+                                                             focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                                                             hover:border-slate-600/50 transition-all duration-200"
+                                                />
+                                            </div>
 
-                                        <div>
-                                            <label className="block text-sm font-medium text-foreground mb-2">
-                                                Docker Image
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={serviceDetails[serviceId]?.image || ''}
-                                                onChange={(e) => updateServiceDetail(serviceId, 'image', e.target.value)}
-                                                placeholder={getDefaultImage(serviceId)}
-                                                className="w-full px-3 py-2 bg-background/80 border border-border rounded-lg 
-                                                         focus:ring-2 focus:ring-primary/20 focus:border-primary/50 
-                                                         transition-all duration-200"
-                                            />
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-300 mb-3">
+                                                    Port
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={serviceDetails[serviceId]?.port || ''}
+                                                    onChange={(e) => updateServiceDetail(serviceId, 'port', e.target.value)}
+                                                    placeholder={getDefaultPort(serviceId)}
+                                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl 
+                                                             text-white placeholder:text-slate-500
+                                                             focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                                                             hover:border-slate-600/50 transition-all duration-200"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-300 mb-3">
+                                                    Docker Image
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={serviceDetails[serviceId]?.image || ''}
+                                                    onChange={(e) => updateServiceDetail(serviceId, 'image', e.target.value)}
+                                                    placeholder={getDefaultImage(serviceId)}
+                                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl 
+                                                             text-white placeholder:text-slate-500
+                                                             focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 
+                                                             hover:border-slate-600/50 transition-all duration-200"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -265,47 +305,88 @@ export default function DockerComposeFlow() {
                 )}
 
                 {/* Action buttons */}
-                <div className="flex flex-col items-center gap-4 mt-12">
+                <div className="flex flex-col items-center gap-6 mt-16">
                     <div className="flex gap-4">
                         {step === 2 && (
                             <button
                                 onClick={() => setStep(1)}
-                                className="px-6 py-3 text-foreground border border-border/50 rounded-xl 
-                                         hover:border-border hover:bg-muted/30 transition-all duration-200
-                                         flex items-center gap-2"
+                                className="flex items-center gap-2 px-6 py-3 text-slate-300 hover:text-white 
+                                         border border-slate-700/50 rounded-xl hover:border-slate-600/50 
+                                         hover:bg-slate-800/30 transition-all duration-200"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
-                                Back
+                                Back to Selection
                             </button>
                         )}
 
                         <button
                             onClick={handleContinue}
                             disabled={!canContinue}
-                            className="group relative px-12 py-4 bg-gradient-to-r from-primary to-primary/80 
-                                     text-white font-semibold rounded-xl shadow-lg shadow-primary/25 
-                                     hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] 
-                                     active:scale-[0.98] transition-all duration-200
+                            className="group relative px-12 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 
+                                     hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-xl 
+                                     shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40
+                                     hover:scale-[1.02] active:scale-[0.98] transition-all duration-200
                                      disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
-                                     before:absolute before:inset-0 before:rounded-xl 
-                                     before:bg-gradient-to-r before:from-white/20 before:to-transparent 
-                                     before:opacity-0 hover:before:opacity-100 before:transition-opacity"
+                                     disabled:shadow-none"
                         >
-                            <span className="relative flex items-center justify-center gap-2">
-                                {step === 1 ? 'Configure Services' : 'Get Recommendations'}
+                            <span className="relative flex items-center justify-center gap-3">
+                                <span className="text-lg">🐳</span>
+                                {step === 1 ? 'Configure Services' : 'Generate Docker Compose'}
                                 <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                             </span>
                         </button>
                     </div>
 
-                    <p className="text-xs text-muted-foreground text-center">
-                        {selectedServices.length} service{selectedServices.length !== 1 ? 's' : ''} selected
-                    </p>
+                    {/* Progress indicator */}
+                    <div className="text-center">
+                        <p className="text-slate-500 text-sm mb-2">
+                            {selectedServices.length} service{selectedServices.length !== 1 ? 's' : ''} selected
+                        </p>
+                        {step === 2 && (
+                            <div className="flex items-center justify-center gap-2">
+                                <div className="w-32 bg-slate-800 rounded-full h-2">
+                                    <div 
+                                        className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
+                                        style={{ 
+                                            width: `${(selectedServices.filter(id => serviceDetails[id]?.name?.trim()).length / selectedServices.length) * 100}%` 
+                                        }}
+                                    />
+                                </div>
+                                <span className="text-xs text-slate-500">
+                                    {selectedServices.filter(id => serviceDetails[id]?.name?.trim()).length}/{selectedServices.length} configured
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* Feature preview */}
+                {step === 1 && (
+                    <div className="mt-20 text-center">
+                        <p className="text-slate-500 text-sm mb-6">What you'll get</p>
+                        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                            <div className="p-6 rounded-xl bg-slate-900/30 border border-slate-800/50">
+                                <div className="text-3xl mb-3">📋</div>
+                                <h3 className="font-medium text-white mb-2">Complete docker-compose.yml</h3>
+                                <p className="text-xs text-slate-500">Production-ready configuration with all services</p>
+                            </div>
+                            <div className="p-6 rounded-xl bg-slate-900/30 border border-slate-800/50">
+                                <div className="text-3xl mb-3">🔧</div>
+                                <h3 className="font-medium text-white mb-2">Smart Defaults</h3>
+                                <p className="text-xs text-slate-500">Intelligent port mapping and environment setup</p>
+                            </div>
+                            <div className="p-6 rounded-xl bg-slate-900/30 border border-slate-800/50">
+                                <div className="text-3xl mb-3">🚀</div>
+                                <h3 className="font-medium text-white mb-2">Ready to Deploy</h3>
+                                <p className="text-xs text-slate-500">One-command deployment instructions</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
