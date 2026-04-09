@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Navbar } from "@/components/Navbar";
 
 const chips = [
   { 
@@ -68,6 +69,9 @@ const Index = () => {
         </script>
       </Helmet>
 
+      {/* Navbar */}
+      <Navbar />
+
       {/* Animated background grid */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-slate-900" />
@@ -79,41 +83,6 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px]" />
       </div>
-
-      <header className="relative z-10 w-full border-b border-slate-800/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <span className="text-sm font-bold">IP</span>
-            </div>
-            <div className="text-xl font-semibold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-              InfraPilot
-            </div>
-          </div>
-          
-          <nav className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-            <a href="#examples" className="hover:text-white transition-colors">Examples</a>
-          </nav>
-          
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost" 
-              className="text-slate-400 hover:text-white border-slate-700 hover:border-slate-600"
-              onClick={() => navigate('/builder')}
-            >
-              Visual Builder
-            </Button>
-            <Button 
-              className="bg-indigo-600 hover:bg-indigo-500 text-white border-0 shadow-lg shadow-indigo-500/25"
-              onClick={() => navigate('/flow/freeform')}
-            >
-              Try AI Builder →
-            </Button>
-          </div>
-        </div>
-      </header>
 
       <main className="relative z-10" onMouseMove={handleMouseMove}>
         {/* Hero Section - Warp-inspired */}
