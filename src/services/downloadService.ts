@@ -11,6 +11,105 @@ interface Connection {
   type: string;
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function renderMarkdownToHtml(markdown: string) {
+  if (!markdown) return "";
+
+  const codeBlocks: string[] = [];
+  const content = escapeHtml(markdown).replace(/```([\s\S]*?)```/g, (_, code) => {
+    codeBlocks.push(code.trim());
+    return `@@CODEBLOCK[${codeBlocks.length - 1}]@@`;
+  });
+
+  const lines = content.split("\n");
+  const htmlLines: string[] = [];
+  let inUl = false;
+  let inOl = false;
+
+  const flushLists = () => {
+    if (inUl) {
+      htmlLines.push("</ul>");
+      inUl = false;
+    }
+    if (inOl) {
+      htmlLines.push("</ol>");
+      inOl = false;
+    }
+  };
+
+  const formatInlineCode = (text: string) =>
+    text.replace(/`([^`]+)`/g, (_, code) =>
+      `<code style="background:#e2e8f0;color:#0f172a;padding:2px 6px;border-radius:6px;font-family:ui-monospace,monospace;">${code}</code>`
+    );
+
+  lines.forEach((line) => {
+    const codeMatch = line.match(/^@@CODEBLOCK\[(\d+)\]@@$/);
+    if (codeMatch) {
+      flushLists();
+      const code = codeBlocks[Number(codeMatch[1])] ?? "";
+      htmlLines.push(
+        `<pre style="background:#0f172a;color:#f8fafc;padding:16px;border-radius:12px;overflow-x:auto;margin:16px 0;"><code>${escapeHtml(code)}</code></pre>`
+      );
+      return;
+    }
+
+    if (line.trim() === "") {
+      flushLists();
+      htmlLines.push("<p style=\"margin:0 0 12px;line-height:1.6;color:#334155;\">&nbsp;</p>");
+      return;
+    }
+
+    const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+    if (headingMatch) {
+      flushLists();
+      const level = Math.min(6, headingMatch[1].length);
+      htmlLines.push(
+        `<h${level} style="margin:24px 0 12px;color:#0f172a;font-weight:700;">${escapeHtml(headingMatch[2])}</h${level}>`
+      );
+      return;
+    }
+
+    const ulMatch = line.match(/^\s*[-*+]\s+(.*)$/);
+    if (ulMatch) {
+      if (!inUl) {
+        flushLists();
+        inUl = true;
+        htmlLines.push('<ul style="margin:0 0 16px 18px;padding:0;">');
+      }
+      htmlLines.push(
+        `<li style="margin-bottom:8px;line-height:1.6;color:#334155;">${formatInlineCode(escapeHtml(ulMatch[1]))}</li>`
+      );
+      return;
+    }
+
+    const olMatch = line.match(/^\s*\d+\.\s+(.*)$/);
+    if (olMatch) {
+      if (!inOl) {
+        flushLists();
+        inOl = true;
+        htmlLines.push('<ol style="margin:0 0 16px 18px;padding:0;">');
+      }
+      htmlLines.push(
+        `<li style="margin-bottom:8px;line-height:1.6;color:#334155;">${formatInlineCode(escapeHtml(olMatch[1]))}</li>`
+      );
+      return;
+    }
+
+    htmlLines.push(
+      `<p style="margin:0 0 12px;line-height:1.6;color:#334155;">${formatInlineCode(escapeHtml(line))}</p>`
+    );
+  });
+
+  flushLists();
+  return htmlLines.join("");
+}
+
 export const downloadService = {
   // Download as JSON
   downloadJSON(data: Record<string, unknown>, filename: string) {
@@ -37,16 +136,24 @@ export const downloadService = {
       let canvas: HTMLCanvasElement;
 
       if (typeof content === "string") {
-        // Create a temporary container
         const tempDiv = document.createElement("div");
+        tempDiv.style.position = "fixed";
+        tempDiv.style.top = "0";
+        tempDiv.style.left = "0";
+        tempDiv.style.width = "800px";
+        tempDiv.style.padding = "32px";
+        tempDiv.style.backgroundColor = "#ffffff";
+        tempDiv.style.color = "#0f172a";
+        tempDiv.style.fontFamily = "Inter, ui-sans-serif, system-ui, sans-serif";
+        tempDiv.style.lineHeight = "1.6";
+        tempDiv.style.boxSizing = "border-box";
+        tempDiv.style.zIndex = "999999";
         tempDiv.innerHTML = content;
-        tempDiv.style.padding = "20px";
-        tempDiv.style.backgroundColor = "white";
         document.body.appendChild(tempDiv);
-        canvas = await html2canvas(tempDiv);
+        canvas = await html2canvas(tempDiv, { scale: 2, backgroundColor: "#ffffff" });
         document.body.removeChild(tempDiv);
       } else {
-        canvas = await html2canvas(content);
+        canvas = await html2canvas(content, { scale: 2, backgroundColor: "#ffffff" });
       }
 
       const imgData = canvas.toDataURL("image/png");
@@ -56,15 +163,15 @@ export const downloadService = {
         format: "a4",
       });
 
-      const imgWidth = 210; // A4 width in mm
+      const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
       let position = 0;
 
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= 297; // A4 height in mm
+      heightLeft -= 297;
 
-      while (heightLeft >= 0) {
+      while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
@@ -139,19 +246,35 @@ ${recommendations}
       `;
       this.downloadText(textContent, `${filename}.txt`);
     } else if (format === "pdf") {
-      await this.downloadPDF(
-        `
-        <h1>${title}</h1>
-        <p>Date: ${new Date().toLocaleString()}</p>
-        <h2>Services</h2>
-        <ul>${services.map((s) => `<li>${s}</li>`).join("")}</ul>
-        <h2>Connections</h2>
-        <pre>${connections.map((c) => `${c.from} -> ${c.to} (${c.type})`).join("\n")}</pre>
-        <h2>Recommendations</h2>
-        <p>${recommendations}</p>
-        `,
-        `${filename}.pdf`
-      );
+      const htmlBody = `
+        <div style="max-width:760px;padding:0;margin:0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#0f172a;">
+          <h1 style="font-size:32px;margin-bottom:8px;color:#111;font-weight:800;">${escapeHtml(title)}</h1>
+          <p style="margin:0 0 24px;color:#475569;font-size:14px;">Generated on ${escapeHtml(new Date().toLocaleString())}</p>
+
+          <section style="margin-bottom:24px;">
+            <h2 style="font-size:18px;margin:0 0 12px;color:#0f172a;">Services</h2>
+            <ul style="margin:0 0 0 18px;padding:0;color:#334155;">
+              ${services.map((s) => `<li style="margin-bottom:8px;">${escapeHtml(s)}</li>`).join("")}
+            </ul>
+          </section>
+
+          <section style="margin-bottom:24px;">
+            <h2 style="font-size:18px;margin:0 0 12px;color:#0f172a;">Connections</h2>
+            <pre style="background:#f8fafc;color:#0f172a;padding:16px;border-radius:14px;overflow-x:auto;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:0;">${escapeHtml(
+              connections.map((c) => `${c.from} -> ${c.to} (${c.type})`).join("\n")
+            )}</pre>
+          </section>
+
+          <section style="margin-bottom:24px;">
+            <h2 style="font-size:18px;margin:0 0 12px;color:#0f172a;">Recommendations</h2>
+            <div style="font-size:14px;line-height:1.75;color:#334155;">
+              ${renderMarkdownToHtml(recommendations)}
+            </div>
+          </section>
+        </div>
+      `;
+
+      await this.downloadPDF(htmlBody, `${filename}.pdf`);
     }
   },
 
