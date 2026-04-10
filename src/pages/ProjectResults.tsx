@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { saveArchitectureActivity } from "@/utils/activityIntegrationExample";
 import { generateProjectBlueprint } from "@/utils/groq";
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -14,6 +16,8 @@ export default function ProjectResults() {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [askingQuestion, setAskingQuestion] = useState(false);
+    const { user } = useAuth();
+    const hasSavedRef = useRef(false);
 
     useEffect(() => {
         if (!state) return;
@@ -24,6 +28,28 @@ export default function ProjectResults() {
             setLoading(false);
         })();
     }, [state]);
+
+    useEffect(() => {
+        if (!state || !user || loading || !result || hasSavedRef.current) return;
+
+        (async () => {
+            try {
+                await saveArchitectureActivity(
+                    user.uid,
+                    `Project blueprint for ${state.originalInput?.selectedType || "custom project"}`,
+                    `Generated project blueprint for ${state.originalInput?.selectedType || "custom project"}`,
+                    state.selectedComponents ?? [],
+                    [],
+                    result,
+                    result,
+                    "project"
+                );
+                hasSavedRef.current = true;
+            } catch (error) {
+                console.error("Failed to save project activity", error);
+            }
+        })();
+    }, [state, user, loading, result]);
 
     const handleAskQuestion = async () => {
         if (!question.trim()) return;
